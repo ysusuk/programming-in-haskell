@@ -7,34 +7,32 @@ import Data.Char
 
 main = do
   content <- getContents
-  lns <- sequence . map start . tail . lines $ content
-  putStr (unlines lns)
+  let lns =  tail . lines $ content
+  let contents =  map start . zip [1..(length lns)] $ lns
+  putStr (unlines contents)
 
-start :: String -> IO (String)
-start str = do
+start :: (Int, String) -> String
+start (counter, str) =
   if str == "0"
-    then return "INSOMNIA"
+    then "Case #" ++ (show counter) ++": INSOMNIA"
     else
-      lastSeenDigit (read str :: Int) 1 notSeen
+      "Case #" ++ (show counter) ++": " ++ lastSeenDigit (read str :: Int) 1 notSeen
  where
     notSeen = [False, False, False, False, False, False, False, False, False, False]
 
-lastSeenDigit :: Int -> Int -> [Bool] -> IO String
+lastSeenDigit :: Int -> Int -> [Bool] -> String
 lastSeenDigit number n seen =
   if all (== True) seen
-    then return (show (number * (n - 1)))
-    else do
-      putStrLn (show number)
-      putStrLn (show n)
-      putStrLn (show newSeen)
+    then show (number * (n - 1))
+    else
       lastSeenDigit number (n + 1) newSeen
   where
     nextNumber = number * n
-    digits = str2Int nextNumber
+    digits = digitsInNumber nextNumber
     newSeen = seenDigitsInNumber digits seen
 
-str2Int :: Int -> [Int]
-str2Int number = map digitToInt (show number)
+digitsInNumber :: Int -> [Int]
+digitsInNumber number = map digitToInt (show number)
 
 seenDigitsInNumber :: [Int] -> [Bool] -> [Bool]
 seenDigitsInNumber [] ys = ys
