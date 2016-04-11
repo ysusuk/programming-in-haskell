@@ -14,11 +14,20 @@ main = do
 
 start :: (Int, String) -> String
 start (counter, str) =
-  "Case #" ++ (show counter) ++ ":\n"
+  "Case #" ++ (show counter) ++ ":\n" ++ jamStr
   where
     n = read ((splitOn " " str) !! 0) :: Int
     quantity = read ((splitOn " " str) !! 1) :: Int
     jams = generateJams n quantity (replicate n '0') []
+    jamStr = concatMap (++ "\n") (map tuple2Str jams)
+
+tuple2Str :: (String, [Int]) -> String
+tuple2Str t = jam ++ " " ++ divisorsStrWithSeparator
+  where
+    jam = (fst t)
+    divisors = (snd t)
+    divisorsStr = map show divisors
+    divisorsStrWithSeparator = concatMap (++ " ") divisorsStr
 
 nextNumber :: String -> String
 nextNumber number =
